@@ -1,0 +1,40 @@
+### Get all api/v2/pokemon
+GET http://localhost:3000/api/v2/pokemon?limit=5
+
+### Get brand by id
+GET http://localhost:3000/api/v2/pokemon/696e63710f0fcc26d114c8eb
+
+
+
+### Post create a new brand (form-urlencoded)
+POST http://localhost:3000/api/v2/pokemon
+Content-Type: application/x-www-form-urlencoded
+
+name=Toyota
+
+### Post create a new brand
+POST http://localhost:3000/api/v2/pokemon
+Content-Type: application/json
+
+{
+    "no": 1,
+    "name": "Pikachu"
+}
+
+
+### Patch update brand (form-urlencoded)
+PATCH http://localhost:3000/api/v2/pokemon/696e636b0f0fcc26d114c8e9
+Content-Type: application/x-www-form-urlencoded
+
+no=1
+
+### Patch update brand (JSON)
+PATCH http://localhost:3000/api/v2/pokemon/696e63630f0fcc26d114c8e7
+Content-Type: application/json
+
+{
+    "no": 6
+}
+
+### Delete brand by ID
+DELETE http://localhost:3000/api/v2/pokemon/696fdb6d58cde3bdd746bac0

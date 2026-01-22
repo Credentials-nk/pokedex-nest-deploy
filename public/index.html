@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex - Gotta Catch 'Em All!</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔴 Pokédex</h1>
+            <p>Descubre el mundo Pokémon</p>
+        </header>
+
+        <div class="pokemon-grid" id="pokemonGrid">
+            <!-- Los Pokémon se cargarán aquí dinámicamente -->
+            <div class="pokemon-card">
+                <img class="pokemon-image" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png" alt="Bulbasaur">
+                <h2 class="pokemon-name">Bulbasaur</h2>
+                <div>
+                    <span class="pokemon-type">Planta</span>
+                    <span class="pokemon-type">Veneno</span>
+                </div>
+            </div>
+
+            <div class="pokemon-card">
+                <img class="pokemon-image" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png" alt="Charmander">
+                <h2 class="pokemon-name">Charmander</h2>
+                <div>
+                    <span class="pokemon-type">Fuego</span>
+                </div>
+            </div>
+
+            <div class="pokemon-card">
+                <img class="pokemon-image" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png" alt="Squirtle">
+                <h2 class="pokemon-name">Squirtle</h2>
+                <div>
+                    <span class="pokemon-type">Agua</span>
+                </div>
+            </div>
+
+            <div class="pokemon-card">
+                <img class="pokemon-image" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Pikachu">
+                <h2 class="pokemon-name">Pikachu</h2>
+                <div>
+                    <span class="pokemon-type">Eléctrico</span>
+                </div>
+            </div>
+
+            <div class="pokemon-card">
+                <img class="pokemon-image" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" alt="Charizard">
+                <h2 class="pokemon-name">Charizard</h2>
+                <div>
+                    <span class="pokemon-type">Fuego</span>
+                    <span class="pokemon-type">Volador</span>
+                </div>
+            </div>
+
+            <div class="pokemon-card">
+                <img class="pokemon-image" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/9.png" alt="Blastoise">
+                <h2 class="pokemon-name">Blastoise</h2>
+                <div>
+                    <span class="pokemon-type">Agua</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Aquí puedes agregar JavaScript para cargar Pokémon dinámicamente desde tu API
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Pokédex cargada!');
+            
+            // Ejemplo de cómo podrías cargar Pokémon desde tu API de NestJS
+            // fetch('/api/v2/pokemon')
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         renderPokemon(data);
+            //     });
+        });
+
+        function renderPokemon(pokemonList) {
+            const grid = document.getElementById('pokemonGrid');
+            grid.innerHTML = '';
+            
+            pokemonList.forEach(pokemon => {
+                const card = document.createElement('div');
+                card.className = 'pokemon-card';
+                card.innerHTML = `
+                    <img class="pokemon-image" 
+                         src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.no}.png" 
+                         alt="${pokemon.name}">
+                    <h2 class="pokemon-name">${pokemon.name}</h2>
+                    <div>
+                        ${pokemon.types ? pokemon.types.map(type => 
+                            `<span class="pokemon-type">${type}</span>`
+                        ).join('') : ''}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
