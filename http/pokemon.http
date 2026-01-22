@@ -1,5 +1,6 @@
 ### Get all api/v2/pokemon
-GET http://localhost:3000/api/v2/pokemon?limit=5
+GET http://localhost:3000/api/v2/pokemon/1
+
 
 ### Get brand by id
 GET http://localhost:3000/api/v2/pokemon/696e63710f0fcc26d114c8eb

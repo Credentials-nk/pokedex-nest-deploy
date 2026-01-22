@@ -1,76 +1,73 @@
 # Pokedex API
 
-API REST desarrollada con NestJS para gestionar un Pokédex con MongoDB.
+API REST desarrollada con NestJS para gestionar un Pokédex con MongoDB. Enfocada en gestión de entornos y deploy containerizado.
 
-## Características
-
-- CRUD completo de Pokémon
-- Validación de datos con `class-validator` y `class-transformer`
-- Búsqueda flexible por ID de MongoDB, número de Pokédex o nombre
-- **Seed de datos inicial** - Carga automática de Pokédex completo
-- **Paginación** - Listados con límite y offset configurable
-- Servicio de archivos estáticos
-- MongoDB con Mongoose
-- Pipes personalizados para validación de IDs
-
-## Requisitos
+## Requisitos Previos
 
 - Node.js (v18 o superior)
 - pnpm
 - Docker y Docker Compose
 
-## Instalación
+## 🚀 Configuración de Entorno
 
-1. Clonar el repositorio
+### Variables de Entorno Disponibles
 
-2. Instalar dependencias:
-
-```bash
-pnpm install
-```
-
-## Configuración del entorno
-
-1. Copiar el archivo de variables de entorno y renombrarlo:
+1. **Copiar archivo plantilla:**
 
 ```bash
 cp .env.template .env
 ```
 
-2. Completar los valores en [/.env](.env) según tu entorno. Las variables disponibles están definidas en [/.env.template](.env.template):
-   - `MONGODB` - Cadena de conexión a MongoDB.
-   - `PORT` - Puerto en el que se expondrá la API.
-   - `DEFAULT_LIMIT` - Límite de paginación por defecto.
+2. **Variables configurables** en [/.env](.env):
 
-## Arrancar el proyecto
+| Variable        | Descripción                      | Ejemplo                                                             |
+| --------------- | -------------------------------- | ------------------------------------------------------------------- |
+| `MONGODB`       | Cadena de conexión a MongoDB     | `mongodb://user:pass@localhost:27017/nest-pokedex?authSource=admin` |
+| `PORT`          | Puerto de la API                 | `3000`                                                              |
+| `DEFAULT_LIMIT` | Límite de paginación por defecto | `10`                                                                |
 
-1. Levantar la base de datos MongoDB:
+### Entornos
+
+- **Desarrollo** (`.env`): Usa `docker-compose.yml`
+- **Producción** (`.env.prod`): Usa `docker-compose.prod.yaml`
+
+**Nota:** Los archivos `.env` y `.env.prod` son ignorados por git. Copia desde `.env.template`.
+
+## 🐳 Deploy & Orquestación Docker
+
+### Desarrollo
+
+Levantar stack completo con MongoDB:
 
 ```bash
 docker-compose up -d
-```
-
-2. Ejecutar la aplicación en modo desarrollo:
-
-```bash
+pnpm install
 pnpm start:dev
 ```
 
-La aplicación estará disponible en `http://localhost:3000`
+La API estará disponible en `http://localhost:3000`
 
-## Poblar la base de datos
+### Producción
 
-Para cargar los datos iniciales de Pokémon:
+**Build y deploy:**
 
 ```bash
-GET http://localhost:3000/api/seed
+docker-compose -f docker-compose.prod.yaml --env-file .env.prod up --build
 ```
 
-O acceder directamente desde el navegador: `http://localhost:3000/api/seed`
+**Solo run (con imagen ya construida):**
 
-**Nota:** Esta operación es idempotente y puede ejecutarse múltiples veces sin afectar los datos existentes.
+```bash
+docker-compose -f docker-compose.prod.yaml --env-file .env.prod up
+```
 
-## Scripts disponibles
+**Nota Importante:** Docker Compose utiliza automáticamente el archivo `.env` si no se especifica otra fuente. Si configuraste `.env` con variables de producción, simplemente ejecuta:
+
+```bash
+docker-compose -f docker-compose.prod.yaml up --build
+```
+
+## 📜 Scripts Disponibles
 
 ```bash
 # Desarrollo
@@ -81,9 +78,9 @@ pnpm start:debug        # Modo desarrollo con debugger
 pnpm build              # Compilar aplicación
 pnpm start:prod         # Ejecutar en modo producción
 
-# Base de datos
-docker-compose up -d    # Levantar MongoDB
-docker-compose down     # Detener MongoDB
+# Docker
+docker-compose up -d    # Levantar stack de desarrollo
+docker-compose down     # Detener stack
 
 # Testing
 pnpm test               # Ejecutar tests
@@ -91,73 +88,55 @@ pnpm test:e2e           # Ejecutar tests e2e
 pnpm test:cov           # Coverage de tests
 ```
 
-## Endpoints
-
-Todos los endpoints están bajo el prefijo `/api/v2`
+## API Endpoints
 
 ### Pokémon
 
-- `GET /api/v2/pokemon` - Listar todos los pokémon con paginación
-- `GET /api/v2/pokemon?limit=20&offset=0` - Listar pokémon con parámetros de paginación personalizados
-- `GET /api/v2/pokemon/:term` - Obtener un pokémon por ID de MongoDB, número o nombre
-- `POST /api/v2/pokemon` - Crear un nuevo pokémon
-- `PATCH /api/v2/pokemon/:term` - Actualizar un pokémon
-- `DELETE /api/v2/pokemon/:id` - Eliminar un pokémon
+- `GET /api/v2/pokemon` - Listar pokémon (con paginación)
+  - `?limit=20&offset=0` - Parámetros de paginación personalizados
+- `GET /api/v2/pokemon/:term` - Obtener por ID, número o nombre
+- `POST /api/v2/pokemon` - Crear pokémon
+- `PATCH /api/v2/pokemon/:term` - Actualizar pokémon
+- `DELETE /api/v2/pokemon/:id` - Eliminar pokémon
 
 ### Seed
 
-- `GET /api/seed` - Poblar la base de datos con datos iniciales (Pokédex completo)
+- `GET /api/seed` - Cargar Pokédex completo (700+ Pokémon)
 
-## Sistema de Paginación
+## MongoDB
 
-Los endpoints de listado soportan paginación mediante query parameters:
-
-- `limit` - Número de resultados por página (por defecto: 10)
-- `offset` - Número de registros a saltar (por defecto: 0)
-
-Ejemplo:
-
-```
-GET /api/v2/pokemon?limit=20&offset=40
-```
-
-Retorna los Pokémon del 40 al 60.
-
-## Seed de Datos
-
-Para cargar el Pokédex completo en la base de datos, existe un endpoint de seed que puede ser ejecutado una sola vez:
-
-```bash
-GET http://localhost:3000/api/seed
-```
-
-O acceder directamente desde el navegador: `http://localhost:3000/api/seed`
-
-Este proceso cargará aproximadamente 700+ Pokémon en la base de datos MongoDB.
-
-La conexión a MongoDB se configura en `app.module.ts`:
+**Conexión por defecto en `docker-compose.yml`:**
 
 ```
 mongodb://mongo_user:mongo_password@localhost:27017/nest-pokedex?authSource=admin
 ```
 
-Credenciales (definidas en `docker-compose.yml`):
+**Credenciales:**
 
 - Usuario: `mongo_user`
-- Password: `mongo_password`
+- Contraseña: `mongo_password`
 - Base de datos: `nest-pokedex`
 
-## Estructura del proyecto
+## Estructura del Proyecto
 
 ```
 src/
-├── common/              # Módulo común (pipes personalizados)
+├── config/              # Configuración de envs y validación
+├── common/              # Utilidades y pipes personalizados
 ├── pokemon/             # Módulo de Pokémon
 │   ├── dto/            # Data Transfer Objects
 │   ├── entities/       # Entidades de Mongoose
 │   ├── pokemon.controller.ts
 │   ├── pokemon.service.ts
 │   └── pokemon.module.ts
-├── app.module.ts
-└── main.ts
+├── seed/                # Módulo de seed de datos
+│   ├── seed.controller.ts
+│   ├── seed.service.ts
+│   └── seed.module.ts
+├── app.module.ts       # Módulo principal
+└── main.ts             # Entry point
 ```
+
+## Referencias
+
+- [Pokédex Data](https://gist.github.com/Klerith/e7861738c93712840ab3a38674843490)
